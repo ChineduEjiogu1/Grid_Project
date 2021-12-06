@@ -23,6 +23,42 @@ bool checkEmptyBoard(char board[3][3])
     return true;
 }
 
+/* 
+x, y  x, y x, y
+[0,0][0,1][0,2]
+[1,0][1,1][1,2]
+[2,0][2,1][2,2]
+
+First diagonal - Has the same numbers or the two indexs for both (x,y) in that cell.
+Second diagonal - The two indexs are the inverse of each or they add to the number '2'
+Horizontial - All in the same row.
+Vertical - All in the same column.
+*/
+
+char findWinner(char board[3][3])
+{
+    // 1. Visit every cell with nested for loop
+    // 2. Look at each character to see if their in consecutive rows
+        // 2a. Check to see if it's a uppercase "X" or "O"
+        // 2b. Compare the next index (Y + 1)
+        // 2c. If they are equal,compare the next neighboring index.
+        
+    for(int x = 0; x < 3; x++)
+    { 
+            if(board[x][0] == 'X' || board[x][0] == 'O')
+            {
+                if (board[x][0] == board[x][1] && board[x][0] == board[x][2])
+                {
+                    std::cout << "The winner is: " << board[x][0] << std::endl;
+                    return board[x][0];
+                }
+            }
+    } 
+
+    return board[3][3]; 
+}
+
+// Testing are functions for successes or failures.
 bool tests()
 {
     char emptyBoard[3][3];
@@ -37,15 +73,19 @@ bool tests()
 
     bool test1 = checkEmptyBoard(emptyBoard);   
 
-    char notAnEmptyBoard[3][3];
+    char notAnEmptyBoard[3][3]; // Populated with spaces so we considerate it empty.
 
-    // Put !(not) because it's expected to check the non-empty board to come back false.
+    // Put !(not) because it expects to check the non-empty board to come back false.
     bool test2 = !checkEmptyBoard(notAnEmptyBoard);
+
+    char winningBoard[3][3] = {'X','X','X'}; // Horizontially winning Tic-Tac-Toe.
+
+    bool test3 = findWinner(winningBoard);
 
     // pseduo-code
     // return true (test1 && test2) == true;
 
-    return (test1 && test2);
+    return (test1 && test2 && test3);
 
 }
 
@@ -53,7 +93,8 @@ int main()
 {
     bool results = tests();
 
-    if(results == false){
+    if(results == false)
+    {
 
         std::cout << "Test Failed" << std::endl;
 
