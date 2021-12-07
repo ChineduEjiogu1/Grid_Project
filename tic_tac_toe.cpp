@@ -1,7 +1,7 @@
 #include <iostream>
 
-// Function for empty board that will contain space characters and be checked or 
-// guarantee that it is in fact empty
+// Function for empty board that will contain space characters and will be checked or 
+// be guaranteed that it is in fact empty.
 bool checkEmptyBoard(char board[3][3])
 {
     for(int x = 0; x < 3; x++) // My Row, X or I
@@ -24,47 +24,16 @@ bool checkEmptyBoard(char board[3][3])
 }
 
 /* 
- x, y x, y x, y
+ x,y  x,y  x,y
 [0,0][0,1][0,2]
 [1,0][1,1][1,2]
 [2,0][2,1][2,2]
 
 First diagonal - Has the same numbers or the two indexs for both (x,y) in that cell.
 Second diagonal - The two indexs are the inverse of each or they add to the number '2'
-Horizontial - All in the same row.
-Vertical - All in the same column.
+Horizontial - All in the same row - the y changes, the x stays the same, i.e. y + 1,.
+Vertical - All in the same column the x changes, the y stays the same i.e x + 1.
 */
-
-char findWinnerDiagonial(char board[3][3])
-{
-    for(int x = 0; x < 3; x++)
-    {
-        for(int y = 0; y < 3; y++)
-        {
-            if(board[x][y] == 'X' || board[x][y] == 'O')
-            {
-                if(board[x] == board[y])
-                {
-                    std::cout << "The winner is: " << board[x][y] << std::endl;
-                    return board[x][y];
-
-                }else
-                {
-                    if(board[x][y] == 'X' || board[x][y] == 'O')
-                    {
-                        if(board[x][y] == 2)
-                        {
-                            std::cout << "The winner is: " << board[x][y] << std::endl;
-                            return board[x][y];
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return board[3][3]; 
-}
 
 char findWinnerHorizontial(char board[3][3])
 {
@@ -89,7 +58,62 @@ char findWinnerHorizontial(char board[3][3])
     return board[3][3]; 
 }
 
-// Testing are functions for successes or failures.
+char findWinnerVertical(char board[3][3])
+{
+        
+    for(int y = 0; y < 3; y++)
+    { 
+            if(board[0][y] == 'X' || board[0][y] == 'O')
+            {
+                if (board[0][y] == board[1][y] && board[0][y] == board[2][y])
+                {
+                    std::cout << "The winner is: " << board[0][y] << std::endl;
+                    return board[0][y];
+                }
+            }
+    } 
+
+    return board[3][3]; 
+}
+
+char findWinnerDiagonial(char board[3][3])
+{
+    for(int x = 0; x < 3; x++)
+    {
+        for(int y = 0; y < 3; y++)
+        {
+            if(board[x][y] == 'X' || board[x][y] == 'O')
+            {
+                if(x == y)
+                {
+                    x++;
+                    y++;
+
+                    std::cout << "The winner is: " << board[x][y] << std::endl;
+                    return board[x][y];
+
+                }else
+                    {
+                        // if(board[2][0] == 2 && board[1][1] == 2 && board[0][2] == 2) - Alternative
+                        if( (x + y) == 2 )
+                        {
+                            x++;
+                            y++;
+
+                            std::cout << "The winner is: " << board[x][y] << std::endl;
+                            return board[x][y];
+                        }
+                    
+                    }
+            }
+        }
+    }
+
+    return board[3][3]; 
+}
+
+
+// Testing functions for successes or failures.
 bool tests()
 {
     char emptyBoard[3][3];
@@ -111,22 +135,40 @@ bool tests()
 
     char winningBoardHorizontial[3][3] = {'X','X','X'}; // Horizontially winning Tic-Tac-Toe.
 
+    char winningBoardVertical[3][3] = 
+    {
+        {'O'}, 
+        {'O'}, 
+        {'O'}
+    };          // Vertically winning Tic-Tac-Toe
+
     char winningBoardDiagonial[3][3] = 
     {
-        {'O','X','X'}, 
+        {'O','X','X'},
         {'X','O','O'}, 
         {'X','O','O'}
-    };
+    };        // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking down**
+
+     char winningBoardDiagonial2[3][3] = 
+    {
+        {'O','X','X'},
+        {'X','X','O'}, 
+        {'X','O','O'}
+    };        // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking up**
+
 
     bool test3 = findWinnerHorizontial(winningBoardHorizontial);
 
-    bool test4 = findWinnerDiagonial(winningBoardDiagonial);
+    bool test4 = findWinnerVertical(winningBoardVertical);
 
+    bool test5 = findWinnerDiagonial(winningBoardDiagonial);
+
+    bool test6 = findWinnerDiagonial(winningBoardDiagonial2);
 
     // pseduo-code
     // return true (test1 && test2) == true;
 
-    return (test1 && test2 && test3 && test4);
+    return (test1 && test2 && test3 && test4 && test5 && test6);
 
 }
 
