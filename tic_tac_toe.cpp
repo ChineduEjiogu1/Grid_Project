@@ -24,7 +24,7 @@ bool checkEmptyBoard(char board[3][3])
 }
 
 /* 
-x, y  x, y x, y
+ x, y x, y x, y
 [0,0][0,1][0,2]
 [1,0][1,1][1,2]
 [2,0][2,1][2,2]
@@ -35,7 +35,38 @@ Horizontial - All in the same row.
 Vertical - All in the same column.
 */
 
-char findWinner(char board[3][3])
+char findWinnerDiagonial(char board[3][3])
+{
+    for(int x = 0; x < 3; x++)
+    {
+        for(int y = 0; y < 3; y++)
+        {
+            if(board[x][y] == 'X' || board[x][y] == 'O')
+            {
+                if(board[x] == board[y])
+                {
+                    std::cout << "The winner is: " << board[x][y] << std::endl;
+                    return board[x][y];
+
+                }else
+                {
+                    if(board[x][y] == 'X' || board[x][y] == 'O')
+                    {
+                        if(board[x][y] == 2)
+                        {
+                            std::cout << "The winner is: " << board[x][y] << std::endl;
+                            return board[x][y];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return board[3][3]; 
+}
+
+char findWinnerHorizontial(char board[3][3])
 {
     // 1. Visit every cell with nested for loop
     // 2. Look at each character to see if their in consecutive rows
@@ -78,14 +109,24 @@ bool tests()
     // Put !(not) because it expects to check the non-empty board to come back false.
     bool test2 = !checkEmptyBoard(notAnEmptyBoard);
 
-    char winningBoard[3][3] = {'X','X','X'}; // Horizontially winning Tic-Tac-Toe.
+    char winningBoardHorizontial[3][3] = {'X','X','X'}; // Horizontially winning Tic-Tac-Toe.
 
-    bool test3 = findWinner(winningBoard);
+    char winningBoardDiagonial[3][3] = 
+    {
+        {'O','X','X'}, 
+        {'X','O','O'}, 
+        {'X','O','O'}
+    };
+
+    bool test3 = findWinnerHorizontial(winningBoardHorizontial);
+
+    bool test4 = findWinnerDiagonial(winningBoardDiagonial);
+
 
     // pseduo-code
     // return true (test1 && test2) == true;
 
-    return (test1 && test2 && test3);
+    return (test1 && test2 && test3 && test4);
 
 }
 
