@@ -76,7 +76,7 @@ void userInputBoard(char board[3][3])
             std::cout << board[i][j];
         }
 
-        std::cout << "\n";
+        std::cout << "\n"; // Printing newline of rows (0 - 2) or (1 - 3)
     }
 }
 /*
