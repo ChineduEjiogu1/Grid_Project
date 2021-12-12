@@ -22,10 +22,9 @@ bool checkEmptyBoard(char board[3][3])
     return true;
 }
 
-void userInputBoard(char board[3][3])
+void userInputBoard(char board[3][3], bool &player)
 {
     int row = 0, column = 0;
-    bool player = true;
 
     std::cout << "\n";
     std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
@@ -39,10 +38,12 @@ void userInputBoard(char board[3][3])
             if (player) // if it equals true is player1 turn
             {
                 board[row][column] = 'X'; // Mark the cell with an 'X'
+                player = false;
             }
             else
             {
                 board[row][column] = 'O'; // Mark the cell with a 'O'
+                player = true;
             }
         }
         else // Paired with line 37 if statement block, for checking if the cell is (not) a period
@@ -56,10 +57,12 @@ void userInputBoard(char board[3][3])
             if (player)
             {
                 board[row][column] = 'X'; // Mark the cell with an 'X'
+                player = false;
             }
             else
             {
                 board[row][column] = 'O'; // Mark the cell with a 'O'
+                player = true;
             }
         }
     }
@@ -91,7 +94,7 @@ Horizontial - All in the same row - the y changes, the x stays the same, i.e. y 
 Vertical - All in the same column the x changes, the y stays the same i.e x + 1.
 */
 
-char findWinnerHorizontial(char board[3][3])
+bool findWinnerHorizontial(char board[3][3])
 {
     // 1. Visit every cell with nested for loop
     // 2. Look at each character to see if their in consecutive rows
@@ -106,15 +109,15 @@ char findWinnerHorizontial(char board[3][3])
             if (board[x][0] == board[x][1] && board[x][0] == board[x][2])
             {
                 std::cout << "The winner is: " << board[x][0] << std::endl;
-                return board[x][0];
+                return true;
             }
         }
     }
 
-    return board[3][3];
+    return false;
 }
 
-char findWinnerVertical(char board[3][3])
+bool findWinnerVertical(char board[3][3])
 {
 
     for (int y = 0; y < 3; y++)
@@ -124,15 +127,15 @@ char findWinnerVertical(char board[3][3])
             if (board[0][y] == board[1][y] && board[0][y] == board[2][y])
             {
                 std::cout << "The winner is: " << board[0][y] << std::endl;
-                return board[0][y];
+                return true;
             }
         }
     }
 
-    return board[3][3];
+    return false;
 }
 
-char findWinnerDiagonial(char board[3][3])
+bool findWinnerDiagonial(char board[3][3])
 {
     for (int x = 0; x < 3; x++)
     {
@@ -141,33 +144,34 @@ char findWinnerDiagonial(char board[3][3])
             if (board[x][y] == 'X' || board[x][y] == 'O')
             {
                 // First Diagonal
-                if (x == y)
+                if (board[0][0] == board[1][1] && board[0][0] == board[2][2])
                 {
-                    x++;
-                    y++;
-
                     std::cout << "The winner is: " << board[x][y] << std::endl;
-                    return board[x][y];
+                    return true;
                 }
                 else
                 {   
                     // Second Diagonal
 
-                    // if(board[2][0] == 2 && board[1][1] == 2 && board[0][2] == 2) - Alternative way of checking for second diagonal
-                    if ((x + y) == 2) 
+                    // if(board[2][0] == board[1][1] && board[2][0] == board[0][2]) - Alternative way of checking for second diagonal
+                    // ((x + y) == 2) - diagonal condition advanced way, but not working.
+                    if (board[x][y] == 'X' || board[x][y] == 'O')
                     {
-                        std::cout << "The winner is: " << board[x][y] << std::endl;
-                        return board[x][y];
+                        if (board[2][0] == board[1][1] && board[2][0] == board[0][2]) 
+                        {
+                            std::cout << "The winner is: " << board[1][1] << std::endl;
+                            return true;
+                        }
                     }
                 }
             }
         }
     }
 
-    return board[3][3];
+    return false;
 }
 
-// Testing functions for successes and failures.
+// Testing functions for successes and failures. AKA Test cases
 bool tests()
 {
     char emptyBoard[3][3];
@@ -222,25 +226,45 @@ bool tests()
 
     return (test1 && test2 && test3 && test4 && test5 && test6);
 }
+
 int main()
 {
-    bool results = tests();
+    // bool results = tests();
 
-    if (results == false)
-    {
-
-        std::cout << "Test Failed" << std::endl;
-    }
-    else
-    {
-        std::cout << "Test was a Success" << std::endl;
-    }
+    bool player = true;
 
     char testInputOfBoard[3][3] = {{'.', '.', '.'}, 
                                    {'.', '.', '.'}, 
                                    {'.', '.', '.'}};
 
-    userInputBoard(testInputOfBoard);
+    while(tests()){
+        
+        userInputBoard(testInputOfBoard, player);
+
+        // There are 8 ways of winning Tic-tac-Toe
+        // 3 horizontial ways of winning
+        // 3 vertical ways of winning 
+        // 2 diagonal ways of winning
+        // (3 + 3) = 6 -> (6 + 2) = 8
+    
+        if (findWinnerHorizontial(testInputOfBoard) || findWinnerVertical(testInputOfBoard) || findWinnerDiagonial(testInputOfBoard))
+        {
+            break;
+        } 
+                
+    }
+
+    std::cout << "\n";
+
+    // if (results == false)
+    // {
+
+    //     std::cout << "Test Failed" << std::endl;
+    // }
+    // else
+    // {
+    //     std::cout << "Test was a Success" << std::endl;
+    // }
 
     return 0;
 }
