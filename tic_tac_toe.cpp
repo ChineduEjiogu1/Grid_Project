@@ -31,8 +31,7 @@ void userInputBoard(char board[3][3], bool &player)
     std::cin >> row; std::cin >> column;
     std::cout << "\n";
 
-    
-    // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input - but it didn't make sense
+    // https://stackoverflow.com/questions/18728754/checking-cin-input-stream-produces-an-integer
     while(std::cin.fail())
     {
         std::cout << "Please enter your desired row and column [" << row << "] [SPACE] [" << column << "]: \n";
