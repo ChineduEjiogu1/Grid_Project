@@ -34,7 +34,7 @@ void userInputBoard(char board[3][3], bool &player)
     // https://stackoverflow.com/questions/18728754/checking-cin-input-stream-produces-an-integer
     while(std::cin.fail())
     {
-        std::cout << "Please enter your desired row and column [" << row << "] [SPACE] [" << column << "]: \n";
+        std::cout << "Invalid input: Enter your desired row and column this way please [" << row << "] [SPACE] [" << column << "]: \n";
         std::cin.clear();
         std::cin.ignore(256,'\n');
         std::cin >> row ; std::cin >> column;
