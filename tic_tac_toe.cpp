@@ -28,8 +28,9 @@ void userInputBoard(char board[3][3], bool &player)
 
     std::cout << "\n";
     std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
-    
+
     std::cin >> row; std::cin >> column;
+    std::cout << "\n";
 
     if (row <= 2 && column <= 2 && row >= 0 && column >= 0) // Checking for bounds, array bounds
     {
@@ -50,8 +51,28 @@ void userInputBoard(char board[3][3], bool &player)
         {
             while (board[row][column] == 'X' || board[row][column] == 'O')
             {
-                std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
-                std::cin >> row ; std::cin >> column;
+                // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input
+                if( (!char(32)) && std::cin >> row && std::cin >> column)
+                {
+                    std::cout << "You can't enter input that way it's [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
+                    std::cin >> row ; std::cin >> column;
+                }
+                else
+                {
+                    std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
+                    std::cin >> row ; std::cin >> column;
+                }
+                // implemention - If your previous input is the same as the next input.
+                if(board[row][column] == 'X' || board[row][column] == 'O')
+                {
+                    std::cout << "You entered the same row and column [" << row << "][" << column << "]:\nPlease enter again: \n";
+                    std::cin >> row ; std::cin >> column;
+                }
+                else
+                {
+                    std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
+                    std::cin >> row ; std::cin >> column;
+                }
             }
 
             if (player)
@@ -69,17 +90,19 @@ void userInputBoard(char board[3][3], bool &player)
     else
     {
         std::cout << "Invalid input: rows must be 0 - 2, and columns must be  0 - 2 \n";
+        std::cout << "\n";
     }
 
-    for (int i = 0; i < 3; i++) // Row
+    // Row
+    for (int i = 0; i < 3; i++) 
     {
-
-        for (int j = 0; j < 3; j++) // Column
+        // Column
+        for (int j = 0; j < 3; j++) 
         {
             std::cout << board[i][j];
         }
-
-        std::cout << "\n"; // Printing newline of rows (0 - 2) or (1 - 3)
+        // Printing newline of rows (0 - 2) or (1 - 3)
+        std::cout << "\n";
     }
 
     std::cout << "\n";
@@ -121,7 +144,7 @@ bool findWinnerHorizontial(char board[3][3])
         {
             if (board[x][0] == board[x][1] && board[x][0] == board[x][2])
             {
-                std::cout << "The winner is horizontial: " << board[x][0] << "\n";
+                //std::cout << "The winner is horizontial: " << board[x][0] << "\n";
                 return true;
             }
         }
@@ -139,7 +162,7 @@ bool findWinnerVertical(char board[3][3])
         {
             if (board[0][y] == board[1][y] && board[0][y] == board[2][y])
             {
-                std::cout << "The winner is vertical: " << board[0][y] << "\n";
+                // std::cout << "The winner is vertical: " << board[0][y] << "\n";
                 return true;
             }
         }
@@ -167,17 +190,18 @@ bool findWinnerDiagonial(char board[3][3])
 
         // if(board[2][0] == board[1][1] && board[2][0] == board[0][2]) - Alternative way of checking for second diagonal
         // ((x + y) == 2) - diagonal condition advanced way, but not working.
+        // x++;*
+        // y++;
                     
     if (board[2][0] == board[1][1] && board[2][0] == board[0][2] && (board[2][0] == 'X' || board[2][0] == 'O')) 
     {
-        std::cout << "The winner is: " << board[1][1] << "\n";
+        // std::cout << "The winner is: " << board[1][1] << "\n";
         // std::cout << "The winner is diagonal 2: " << board[1][1] << std::endl;
         return true;
     }
 
     return false;    
 }
-
 
 bool winner(char board[3][3])
 {
@@ -258,7 +282,17 @@ bool tests()
 
 int main()
 {
-    // bool results = tests();
+    bool results = tests();
+
+    if (results == false)
+    {
+
+        std::cout << "Test has Failed" << std::endl;
+    }
+    else
+    {
+        std::cout << "Test was a Success!" << std::endl;
+    }
 
     bool player = true;
 
@@ -268,30 +302,22 @@ int main()
     
     char players[2] = {'O', 'X'};
 
-    while(!winner(testInputOfBoard) && hasEmptyProperties(testInputOfBoard)){
+    while(!winner(testInputOfBoard) && hasEmptyProperties(testInputOfBoard))
+    {
         userInputBoard(testInputOfBoard, player);
     }
+
     if(winner(testInputOfBoard))
     {
-        std::cout << players[(player^true)] << "\n";
+        std::cout << "The winner is: " << players[(player^true)] << "\n";
         std::cout << "\n";
     }
+
     else
     {
         std::cout << "\n";
         std::cout << "The game is a draw, please play again\n";
-        std::cout << "\n";
     }
     
-    // if (results == false)
-    // {
-
-    //     std::cout << "Test Failed" << std::endl;
-    // }
-    // else
-    // {
-    //     std::cout << "Test was a Success" << std::endl;
-    // }
-
     return 0;
 }
