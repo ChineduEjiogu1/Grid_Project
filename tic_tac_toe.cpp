@@ -27,73 +27,69 @@ void userInputBoard(char board[3][3], bool &player)
     int row = 0, column = 0;
 
     std::cout << "\n";
-    std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
+    std::cout << "Please enter your desired row and column [" << row << "] [SPACE] [" << column << "]: \n";
     std::cin >> row; std::cin >> column;
     std::cout << "\n";
 
-    /*
-    // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input
-     while(! (std::cin >> row || std::cin >> column) )
-     {
-
-        if( ((!char(32) || !('\n'))) && (row <= 2 && column <= 2))
-        {
-            
-            std::cout << "You can't enter input that way it's [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
-            std::cin >> row ; std::cin >> column;
-        }
+    
+    // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input - but it didn't make sense
+    while(std::cin.fail())
+    {
+        std::cout << "Please enter your desired row and column [" << row << "] [SPACE] [" << column << "]: \n";
+        std::cin.clear();
+        std::cin.ignore(256,'\n');
+        std::cin >> row ; std::cin >> column;
     }
-    */
 
-    if (row <= 2 && column <= 2 && row >= 0 && column >= 0) // Checking for bounds, array bounds
+    // Checking for bounds, array bounds
+    if (row <= 2 && column <= 2 && row >= 0 && column >= 0) 
     {
         if (board[row][column] == '.') // it's a period
         {
-            if (player) // if it equals true is player1 turn
+            // if it equals true is player1 turn
+            if (player) 
             {
-                board[row][column] = 'X'; // Mark the cell with an 'X'
+                // Mark the cell with an 'X'
+                board[row][column] = 'X';
+                // true is first player 
                 player = false;
+                // false is second player
             }
             else
             {
-                board[row][column] = 'O'; // Mark the cell with a 'O'
+                // Mark the cell with a 'O'
+                board[row][column] = 'O'; 
                 player = true;
             }
         }
-        else // Paired with line 37 if statement block, for checking if the cell is (not) a period
+        // Paired with line 37 if statement block, for checking if the cell is (not) a period
+        else 
         {
             while (board[row][column] == 'X' || board[row][column] == 'O')
             {
-                // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input
-                if( ( !(char(32) && !('\n')) ) && (row <= 2 && column <= 2) )
+               // implemention - If your previous input is the same as the next input.
+                if(board[row][column] == 'X' || board[row][column] == 'O')
                 {
-                    // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input
-                    std::cout << "Invaild input: enter it this way please: [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
-                    //std::cin >> row ; std::cin >> column;
-                    row++;
-                    column++;
-                }
-                // implemention - If your previous input is the same as the next input.
-                else if(board[row][column] == 'X' || board[row][column] == 'O')
-                {
-                    std::cout << "You entered the same row and column [" << row << "][" << column << "]:\nPlease enter again: \n";
-                    // std::cin >> row ; std::cin >> column;
-                }
-                else
-                {
-                    std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
+                    std::cout << "You entered the same row and column again [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
+                    std::cin.clear();
+                    std::cin.ignore(256,'\n');
                     std::cin >> row ; std::cin >> column;
                 }
+
             }
 
             if (player)
             {
-                board[row][column] = 'X'; // Mark the cell with an 'X'
+               // Mark the cell with an 'X' 
+                board[row][column] = 'X'; 
+                // true is first player 
                 player = false;
             }
             else
             {
-                board[row][column] = 'O'; // Mark the cell with a 'O'
+                // Mark the cell with a 'O'
+                board[row][column] = 'O'; 
+                // false is second player
                 player = true;
             }
         }
