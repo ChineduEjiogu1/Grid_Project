@@ -28,9 +28,25 @@ void userInputBoard(char board[3][3], bool &player)
 
     std::cout << "\n";
     std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
-
     std::cin >> row; std::cin >> column;
     std::cout << "\n";
+
+    // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input
+    //  while(std::cin >> row || std::cin >> column)
+    //  {
+    //      // && (std::cin >> row && std::cin >> column) == (row + column)
+    //     if( ((!char(32) || !('\n'))) && (std::cin >> row && std::cin >> column) == (row + column) <= row)
+    //     {
+    //         
+    //         std::cout << "You can't enter input that way it's [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
+    //         std::cin >> row ; std::cin >> column;
+    //     }
+    //     else
+    //     {
+    //         std::cout << "Please enter your desired row and column [" << row << "][" << column << "]: \n";
+    //         std::cin >> row ; std::cin >> column;
+    //     }
+    // }
 
     if (row <= 2 && column <= 2 && row >= 0 && column >= 0) // Checking for bounds, array bounds
     {
@@ -52,9 +68,10 @@ void userInputBoard(char board[3][3], bool &player)
             while (board[row][column] == 'X' || board[row][column] == 'O')
             {
                 // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input
-                if( (!char(32)) && std::cin >> row && std::cin >> column)
+                if( (!(char(32) || !('\n'))))
                 {
-                    std::cout << "You can't enter input that way it's [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
+                    // Trying to implement input checker i.e 00 can't be the right input, 0 + space + 0 is the right input
+                    std::cout << "Invaild input: enter it this way please: [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
                     std::cin >> row ; std::cin >> column;
                 }
                 else
@@ -87,12 +104,13 @@ void userInputBoard(char board[3][3], bool &player)
             }
         }
     }
+
     else
     {
         std::cout << "Invalid input: rows must be 0 - 2, and columns must be  0 - 2 \n";
         std::cout << "\n";
     }
-
+ 
     // Row
     for (int i = 0; i < 3; i++) 
     {
