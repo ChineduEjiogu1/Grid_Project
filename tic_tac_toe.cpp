@@ -34,7 +34,7 @@ void userInputBoard(char board[3][3], bool &player)
     // https://stackoverflow.com/questions/18728754/checking-cin-input-stream-produces-an-integer
     while(std::cin.fail())
     {
-        std::cout << "Invalid input: Enter your desired row and column this way please [" << row << "] [SPACE] [" << column << "]: \n";
+        std::cout << "Invalid input (Integer not found): Enter your desired row and column this way please [" << row << "] [SPACE] [" << column << "]: \n";
         std::cin.clear();
         std::cin.ignore(256,'\n');
         std::cin >> row ; std::cin >> column;
@@ -231,7 +231,7 @@ bool hasEmptyProperties(char emptyBoard[3][3]){
     return false;
 }
 
-// Testing functions for successes and failures. AKA Test cases
+// Testing functions for successes and/or failures. AKA Test cases
 bool tests()
 {
     char emptyBoard[3][3];
@@ -246,32 +246,36 @@ bool tests()
 
     bool test1 = checkEmptyBoard(emptyBoard);
 
-    char notAnEmptyBoard[3][3]; // Populated with spaces so we considerate it empty.
+    // Populated with periods so we considerate it empty.
+    char notAnEmptyBoard[3][3]; 
 
     // Put !(not) because it expects to check the non-empty board to come back false.
     bool test2 = !checkEmptyBoard(notAnEmptyBoard);
 
+    // Horizontially winning Tic-Tac-Toe.
     char winningBoardHorizontial[3][3] = {{'O', 'X', 'O'},
                                           {'X', 'X', 'X'},
-                                          {'X', 'O', 'O'}}; // Horizontially winning Tic-Tac-Toe.
-
+                                          {'X', 'O', 'O'}}; 
+    // Vertically winning Tic-Tac-Toe
     char winningBoardVertical[3][3] =
         {
             {'O', 'X', 'O'},
             {'X', 'O', 'O'},
-            {'X', 'O', 'O'}}; // Vertically winning Tic-Tac-Toe
+            {'X', 'O', 'O'}}; 
 
+    // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking down** (Top left to bottom right)
     char winningBoardDiagonial[3][3] =
         {
             {'O', 'X', 'X'},
             {'X', 'O', 'O'},
-            {'X', 'O', 'O'}}; // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking down** (Top left to bottom right)
-
+            {'X', 'O', 'O'}};
+               
+    // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking up** (Bottom left to top right)  
     char winningBoardDiagonial2[3][3] =
         {
             {'O', 'X', 'X'},
             {'X', 'X', 'O'},
-            {'X', 'O', 'O'}}; // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking up** (Bottom left to top right)
+            {'X', 'O', 'O'}}; 
 
     bool test3 = findWinnerHorizontial(winningBoardHorizontial);
 
@@ -317,7 +321,6 @@ int main()
     if(winner(testInputOfBoard))
     {
         std::cout << "The winner is: " << players[(player^true)] << "\n";
-        std::cout << "\n";
     }
 
     else
