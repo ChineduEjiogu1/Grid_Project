@@ -1,12 +1,53 @@
 #include <iostream>
+#include <string>
+
+#define SIZE 3
+const char players[2] = {'O', 'X'};
+
+//color code reference https://opensource.com/article/19/9/linux-terminal-colors
+std::string ColorBlue (char z)
+{
+    return "\e[01;34m" + std::string(1,z) + "\e[0m";
+}
+
+std::string ColorYellow(char q)
+{
+    return "\e[01;33m" + std::string(1,q) + "\e[0m";
+}
+
+std::string ColorGreen(char w)
+{
+    return "\e[01;32m" + std::string(1,w) + "\e[0m";
+}
+
+std::string colorElement(char s)
+{
+    if(s == 'O')
+        return ColorGreen(s);
+
+    if(s == 'X')
+        return ColorBlue(s);
+    else
+        return ColorYellow(s);
+    
+}
+
+void userInputTest(char board[SIZE][SIZE], bool &player)
+{
+    std::string usersBoardInput = "";
+    std::cin.getline(std::cin, usersBoardInput);
+    // goal 1 - user board input has a [SPACE]
+    // goal 2 - left of space should be valid integer (board location)
+    // goal 3 - right of space should be valid integer (board location)
+}
 
 // A function for an empty board that will contain period characters and will be checked or
 // be guaranteed that it is infact a period.
-bool checkEmptyBoard(char board[3][3])
+bool checkEmptyBoard(char board[SIZE][SIZE])
 {
-    for (int x = 0; x < 3; x++) // My Row, X or I
+    for (int x = 0; x < SIZE; x++) // My Row, X or I
     {
-        for (int y = 0; y < 3; y++) // My colunm, Y or J
+        for (int y = 0; y < SIZE; y++) // My colunm, Y or J
         {
             if (board[x][y] == '.')
             {
@@ -22,98 +63,117 @@ bool checkEmptyBoard(char board[3][3])
     return true;
 }
 
-void userInputBoard(char board[3][3], bool &player)
+void userInputBoard(char board[SIZE][SIZE], bool &player)
 {
     int row = 0, column = 0;
 
     std::cout << "\n";
     std::cout << "Please enter your desired row and column [" << row << "] [SPACE] [" << column << "]: \n";
-    std::cin >> row; std::cin >> column;
+    std::cin >> row;
+    std::cin >> column;
     std::cout << "\n";
 
     // https://stackoverflow.com/questions/18728754/checking-cin-input-stream-produces-an-integer
-    while(std::cin.fail())
+    while (std::cin.fail())
     {
         std::cout << "Invalid input (Integer not found): Enter your desired row and column this way please [" << row << "] [SPACE] [" << column << "]: \n";
         std::cin.clear();
-        std::cin.ignore(256,'\n');
-        std::cin >> row ; std::cin >> column;
+        std::cin.ignore(256, '\n');
+        std::cin >> row;
+        std::cin >> column;
     }
 
     // Checking for bounds, array bounds
-    if (row <= 2 && column <= 2 && row >= 0 && column >= 0) 
+    // if (row <= 2 && column <= 2 && row >= 0 && column >= 0)
+    if (row < SIZE && column < SIZE && row >= 0 && column >= 0)
     {
         if (board[row][column] == '.') // it's a period
         {
             // if it equals true is player1 turn
-            if (player) 
+            if (player)
             {
                 // Mark the cell with an 'X'
                 board[row][column] = 'X';
-                // true is first player 
+                // true is first player
                 player = false;
                 // false is second player
             }
             else
             {
                 // Mark the cell with a 'O'
-                board[row][column] = 'O'; 
+                board[row][column] = 'O';
                 player = true;
             }
         }
         // Paired with line 37 if statement block, for checking if the cell is (not) a period
-        else 
+        else
         {
             while (board[row][column] == 'X' || board[row][column] == 'O')
             {
-               // implemention - If your previous input is the same as the next input.
-                if(board[row][column] == 'X' || board[row][column] == 'O')
+                // implemention - If your previous input is the same as the next input.
+                if (board[row][column] == 'X' || board[row][column] == 'O')
                 {
                     std::cout << "You entered the same row and column again [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
                     std::cin.clear();
-                    std::cin.ignore(256,'\n');
-                    std::cin >> row ; std::cin >> column;
+                    std::cin.ignore(256, '\n');
+                    std::cin >> row;
+                    std::cin >> column;
                 }
-
             }
 
             if (player)
             {
-               // Mark the cell with an 'X' 
-                board[row][column] = 'X'; 
-                // true is first player 
+                // Mark the cell with an 'X'
+                board[row][column] = 'X';
+                // true is first player
                 player = false;
             }
             else
             {
                 // Mark the cell with a 'O'
-                board[row][column] = 'O'; 
+                board[row][column] = 'O';
                 // false is second player
                 player = true;
             }
         }
     }
-
     else
     {
-        std::cout << "Invalid input: rows must be 0 - 2, and columns must be  0 - 2 \n";
+        std::cout << "Invalid input: rows must be 0 - " << (SIZE - 1) << " and columns must be  0 - " << (SIZE - 1) << "\n";
         std::cout << "\n";
     }
- 
+}
+
+void printTicTacToe(char board[SIZE][SIZE], bool player, const bool winner)
+{
+
+    std::cout << "+---+---+---+";
+    std::cout << "\n";
+
     // Row
-    for (int i = 0; i < 3; i++) 
+    for (int i = 0; i < SIZE; i++)
     {
+        std::cout << "|";
         // Column
-        for (int j = 0; j < 3; j++) 
+        for (int j = 0; j < SIZE; j++)
         {
-            std::cout << board[i][j];
+            std::cout << " " << colorElement(board[i][j]) << " ";
+            std::cout << "|";
         }
-        // Printing newline of rows (0 - 2) or (1 - 3)
+        // Printing newline of rows (0 - 2) or (1 - SIZE)
+        std::cout << "\n";
+        std::cout << "+---+---+---+";
         std::cout << "\n";
     }
 
     std::cout << "\n";
+
+    if (winner == false)
+    {
+        std::cout << "The player is: " << players[player] << "\n";
+    }
 }
+
 /*
     x,y  x,y  x,y
     [0,0][0,1][0,2]
@@ -124,7 +184,7 @@ void userInputBoard(char board[3][3], bool &player)
 /*
     There are 8 ways of winning Tic-tac-Toe
     3 horizontial ways of winning
-    3 vertical ways of winning 
+    3 vertical ways of winning
     2 diagonal ways of winning
     (3 + 3) = 6 -> (6 + 2) = 8
     9 - 8 = 1 -> you get one chance at winning
@@ -137,7 +197,7 @@ void userInputBoard(char board[3][3], bool &player)
     Vertical - All in the same column the x changes, the y stays the same i.e x + 1.
 */
 
-bool findWinnerHorizontial(char board[3][3])
+bool findWinnerHorizontial(char board[SIZE][SIZE])
 {
     // 1. Visit every cell with nested for loop
     // 2. Look at each character to see if their in consecutive rows
@@ -145,13 +205,13 @@ bool findWinnerHorizontial(char board[3][3])
     // 2b. Compare the next index (Y + 1)
     // 2c. If they are equal,compare the next neighboring index.
 
-    for (int x = 0; x < 3; x++)
+    for (int x = 0; x < SIZE; x++)
     {
         if (board[x][0] == 'X' || board[x][0] == 'O')
         {
             if (board[x][0] == board[x][1] && board[x][0] == board[x][2])
             {
-                //std::cout << "The winner is horizontial: " << board[x][0] << "\n";
+                // std::cout << "The winner is horizontial: " << board[x][0] << "\n";
                 return true;
             }
         }
@@ -160,10 +220,10 @@ bool findWinnerHorizontial(char board[3][3])
     return false;
 }
 
-bool findWinnerVertical(char board[3][3])
+bool findWinnerVertical(char board[SIZE][SIZE])
 {
 
-    for (int y = 0; y < 3; y++)
+    for (int y = 0; y < SIZE; y++)
     {
         if (board[0][y] == 'X' || board[0][y] == 'O')
         {
@@ -178,16 +238,16 @@ bool findWinnerVertical(char board[3][3])
     return false;
 }
 
-bool findWinnerDiagonial(char board[3][3])
+bool findWinnerDiagonial(char board[SIZE][SIZE])
 {
-           
+
     // First Diagonal
     if (board[0][0] == board[1][1] && board[0][0] == board[2][2] && (board[0][0] == 'X' || board[0][0] == 'O'))
     {
         // std::cout << "The winner is diagonal: " << board[1][1] << std::endl;
         return true;
     }
-        
+
     // Second Diagonal
 
     // x,y  x,y  x,y
@@ -195,35 +255,37 @@ bool findWinnerDiagonial(char board[3][3])
     // [1,0][1,1][1,2]
     // [2,0][2,1][2,2]
 
-        // if(board[2][0] == board[1][1] && board[2][0] == board[0][2]) - Alternative way of checking for second diagonal
-        // ((x + y) == 2) - diagonal condition advanced way, but not working.
-        // x++;*
-        // y++;
-                    
-    if (board[2][0] == board[1][1] && board[2][0] == board[0][2] && (board[2][0] == 'X' || board[2][0] == 'O')) 
+    // if(board[2][0] == board[1][1] && board[2][0] == board[0][2]) - Alternative way of checking for second diagonal
+    // ((x + y) == 2) - diagonal condition advanced way, but not working.
+    // x++;*
+    // y++;
+
+    if (board[2][0] == board[1][1] && board[2][0] == board[0][2] && (board[2][0] == 'X' || board[2][0] == 'O'))
     {
         // std::cout << "The winner is: " << board[1][1] << "\n";
         // std::cout << "The winner is diagonal 2: " << board[1][1] << std::endl;
         return true;
     }
 
-    return false;    
+    return false;
 }
 
-bool winner(char board[3][3])
+bool winner(char board[SIZE][SIZE])
 {
-    return (findWinnerHorizontial(board) || findWinnerVertical(board) || findWinnerDiagonial(board)); 
+    return (findWinnerHorizontial(board) || findWinnerVertical(board) || findWinnerDiagonial(board));
 }
 
-bool hasEmptyProperties(char emptyBoard[3][3]){
+bool hasEmptyProperties(char emptyBoard[SIZE][SIZE])
+{
 
-    for (int row = 0; row < 3; row++)
+    for (int row = 0; row < SIZE; row++)
     {
-        for (int column = 0; column < 3; column++)
+        for (int column = 0; column < SIZE; column++)
         {
-            if(emptyBoard[row][column] == '.'){
+            if (emptyBoard[row][column] == '.')
+            {
                 return true;
-            } 
+            }
         }
     }
 
@@ -234,11 +296,11 @@ bool hasEmptyProperties(char emptyBoard[3][3]){
 // Testing functions for successes and/or failures. AKA Test cases
 bool tests()
 {
-    char emptyBoard[3][3];
+    char emptyBoard[SIZE][SIZE];
 
-    for (int row = 0; row < 3; row++)
+    for (int row = 0; row < SIZE; row++)
     {
-        for (int column = 0; column < 3; column++)
+        for (int column = 0; column < SIZE; column++)
         {
             emptyBoard[row][column] = '.';
         }
@@ -247,35 +309,35 @@ bool tests()
     bool test1 = checkEmptyBoard(emptyBoard);
 
     // Populated with periods so we considerate it empty.
-    char notAnEmptyBoard[3][3]; 
+    char notAnEmptyBoard[SIZE][SIZE];
 
     // Put !(not) because it expects to check the non-empty board to come back false.
     bool test2 = !checkEmptyBoard(notAnEmptyBoard);
 
     // Horizontially winning Tic-Tac-Toe.
-    char winningBoardHorizontial[3][3] = {{'O', 'X', 'O'},
-                                          {'X', 'X', 'X'},
-                                          {'X', 'O', 'O'}}; 
+    char winningBoardHorizontial[SIZE][SIZE] = {{'O', 'X', 'O'},
+                                                {'X', 'X', 'X'},
+                                                {'X', 'O', 'O'}};
     // Vertically winning Tic-Tac-Toe
-    char winningBoardVertical[3][3] =
+    char winningBoardVertical[SIZE][SIZE] =
         {
             {'O', 'X', 'O'},
             {'X', 'O', 'O'},
-            {'X', 'O', 'O'}}; 
+            {'X', 'O', 'O'}};
 
     // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking down** (Top left to bottom right)
-    char winningBoardDiagonial[3][3] =
+    char winningBoardDiagonial[SIZE][SIZE] =
         {
             {'O', 'X', 'X'},
             {'X', 'O', 'O'},
             {'X', 'O', 'O'}};
-               
-    // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking up** (Bottom left to top right)  
-    char winningBoardDiagonial2[3][3] =
+
+    // Diagonially winning Tic-Tac-Toe in two directions (looking up or looking down) - **looking up** (Bottom left to top right)
+    char winningBoardDiagonial2[SIZE][SIZE] =
         {
             {'O', 'X', 'X'},
             {'X', 'X', 'O'},
-            {'X', 'O', 'O'}}; 
+            {'X', 'O', 'O'}};
 
     bool test3 = findWinnerHorizontial(winningBoardHorizontial);
 
@@ -306,21 +368,22 @@ int main()
     }
 
     bool player = true;
+    bool winnerOfGame = false;
 
-    char testInputOfBoard[3][3] = {{'.', '.', '.'}, 
-                                   {'.', '.', '.'}, 
+    char testInputOfBoard[3][3] = {{'.', '.', '.'},
+                                   {'.', '.', '.'},
                                    {'.', '.', '.'}};
-    
-    char players[2] = {'O', 'X'};
 
-    while(!winner(testInputOfBoard) && hasEmptyProperties(testInputOfBoard))
+    while (!winnerOfGame && hasEmptyProperties(testInputOfBoard))
     {
         userInputBoard(testInputOfBoard, player);
+        winnerOfGame = winner(testInputOfBoard);
+        printTicTacToe(testInputOfBoard, player, winnerOfGame);
     }
 
-    if(winner(testInputOfBoard))
+    if (winner(testInputOfBoard))
     {
-        std::cout << "The winner is: " << players[(player^true)] << "\n";
+        std::cout << "The winner is: " << players[(player ^ true)] << "\n";
     }
 
     else
@@ -328,6 +391,6 @@ int main()
         std::cout << "\n";
         std::cout << "The game is a draw, please play again\n";
     }
-    
+
     return 0;
 }
