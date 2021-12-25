@@ -1,44 +1,104 @@
 #include <iostream>
 #include <string>
+#include <regex>
 
 #define SIZE 3
+
+const std::string SIZEOFGRID = "2";
+
 const char players[2] = {'O', 'X'};
 
-//color code reference https://opensource.com/article/19/9/linux-terminal-colors
-std::string ColorBlue (char z)
+// color code reference https://opensource.com/article/19/9/linux-terminal-colors
+std::string ColorBlue(char z)
 {
-    return "\e[01;34m" + std::string(1,z) + "\e[0m";
+    return "\e[01;34m" + std::string(1, z) + "\e[0m";
 }
 
 std::string ColorYellow(char q)
 {
-    return "\e[01;33m" + std::string(1,q) + "\e[0m";
+    return "\e[01;33m" + std::string(1, q) + "\e[0m";
 }
 
 std::string ColorGreen(char w)
 {
-    return "\e[01;32m" + std::string(1,w) + "\e[0m";
+    return "\e[01;32m" + std::string(1, w) + "\e[0m";
 }
 
 std::string colorElement(char s)
 {
-    if(s == 'O')
+    if (s == 'O')
         return ColorGreen(s);
 
-    if(s == 'X')
+    if (s == 'X')
         return ColorBlue(s);
     else
         return ColorYellow(s);
-    
 }
 
-void userInputTest(char board[SIZE][SIZE], bool &player)
+// https://www.cplusplus.com/reference/regex/regex_match/
+// goal 1 - user board input has a [SPACE]
+// goal 2 - left of space should be valid integer (board location)
+// goal 3 - right of space should be valid integer (board location
+void testUserInput(char board[SIZE][SIZE], bool &player)
 {
+    std::string pattern_string = "^([0-" + SIZEOFGRID + "]{1}) ([0-" + SIZEOFGRID + "]{1})$";
+    // std::string pattern_string = "^([0-2]{1}) ([0-2]{1})$";
+    const std::regex pattern(pattern_string);
+
     std::string usersBoardInput = "";
-    std::cin.getline(std::cin, usersBoardInput);
-    // goal 1 - user board input has a [SPACE]
-    // goal 2 - left of space should be valid integer (board location)
-    // goal 3 - right of space should be valid integer (board location)
+    // flag to indicate if we want to show the error message
+    bool show_error = false;
+    std::smatch matches;
+
+    do
+    {
+        if (show_error == true)
+            std::cout << "\n[ Error ] " << usersBoardInput << "  that is not a valid input\n";
+
+        std::cout << "Please enter numerical values for the grid location: ROW [SPACE] COL" << std::endl;
+        std::getline(std::cin, usersBoardInput);
+        show_error = true;
+
+    } while (!std::regex_match(usersBoardInput, matches, pattern));
+
+    // https://www.cplusplus.com/reference/string/stoi/
+    //  extract index values
+    int row = stoi(matches[1].str());
+    int column = stoi(matches[2].str());
+
+    std::cout << "row is " << row << "\n";
+    std::cout << "column is " << column << "\n";
+
+    if (board[row][column] == '.') // it's a period
+    {
+        // if it equals true is player1 turn
+        if (player)
+        {
+            // Mark the cell with an 'X'
+            board[row][column] = 'X';
+            // true is first player
+            player = false;
+            // false is second player
+        }
+        else
+        {
+            // Mark the cell with a 'O'
+            board[row][column] = 'O';
+            player = true;
+        }
+    }
+    // Paired with line 37 if statement block, for checking if the cell is (not) a period
+    else
+    {
+        // implemention - If your previous input is the same as the next input.
+        std::cout << "You entered a position that is already occuped by: " << board[row][column];
+        std::cout << "\nPlease enter again: \n";
+        
+        // std::cout << "Invalid input: rows must be 0 - " << (SIZE - 1) << " and columns must be  0 - " << (SIZE - 1) << "\n";
+        // std::cout << "\n";
+        
+        testUserInput(board, player);  
+    }
 }
 
 // A function for an empty board that will contain period characters and will be checked or
@@ -108,33 +168,10 @@ void userInputBoard(char board[SIZE][SIZE], bool &player)
         // Paired with line 37 if statement block, for checking if the cell is (not) a period
         else
         {
-            while (board[row][column] == 'X' || board[row][column] == 'O')
-            {
-                // implemention - If your previous input is the same as the next input.
-                if (board[row][column] == 'X' || board[row][column] == 'O')
-                {
-                    std::cout << "You entered the same row and column again [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
-                    std::cin.clear();
-                    std::cin.ignore(256, '\n');
-                    std::cin >> row;
-                    std::cin >> column;
-                }
-            }
-
-            if (player)
-            {
-                // Mark the cell with an 'X'
-                board[row][column] = 'X';
-                // true is first player
-                player = false;
-            }
-            else
-            {
-                // Mark the cell with a 'O'
-                board[row][column] = 'O';
-                // false is second player
-                player = true;
-            }
+            
+            // implemention - If your previous input is the same as the next input.
+            std::cout << "You entered the same row and column again [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
+            // userInputBoard(board,player);
         }
     }
     else
@@ -355,6 +392,7 @@ bool tests()
 
 int main()
 {
+
     bool results = tests();
 
     if (results == false)
@@ -370,18 +408,19 @@ int main()
     bool player = true;
     bool winnerOfGame = false;
 
-    char testInputOfBoard[3][3] = {{'.', '.', '.'},
+    char gameBoard[3][3] = {{'.', '.', '.'},
                                    {'.', '.', '.'},
                                    {'.', '.', '.'}};
 
-    while (!winnerOfGame && hasEmptyProperties(testInputOfBoard))
+    while (!winnerOfGame && hasEmptyProperties(gameBoard))
     {
-        userInputBoard(testInputOfBoard, player);
-        winnerOfGame = winner(testInputOfBoard);
-        printTicTacToe(testInputOfBoard, player, winnerOfGame);
+        userInputBoard(gameBoard, player);
+        // testUserInput(gameBoard, player);
+        winnerOfGame = winner(gameBoard);
+        printTicTacToe(gameBoard, player, winnerOfGame);
     }
 
-    if (winner(testInputOfBoard))
+    if (winner(gameBoard))
     {
         std::cout << "The winner is: " << players[(player ^ true)] << "\n";
     }
