@@ -38,7 +38,7 @@ std::string colorElement(char s)
 // https://www.cplusplus.com/reference/regex/regex_match/
 // goal 1 - user board input has a [SPACE]
 // goal 2 - left of space should be valid integer (board location)
-// goal 3 - right of space should be valid integer (board location
+// goal 3 - right of space should be valid integer (board location)
 void testUserInput(char board[SIZE][SIZE], bool &player)
 {
     std::string pattern_string = "^([0-" + SIZEOFGRID + "]{1}) ([0-" + SIZEOFGRID + "]{1})$";
@@ -171,7 +171,7 @@ void userInputBoard(char board[SIZE][SIZE], bool &player)
             
             // implemention - If your previous input is the same as the next input.
             std::cout << "You entered the same row and column again [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
-            // userInputBoard(board,player);
+            userInputBoard(board, player);
         }
     }
     else
