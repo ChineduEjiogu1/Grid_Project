@@ -1,14 +1,36 @@
+/*
+    x,y  x,y  x,y
+    [0,0][0,1][0,2]
+    [1,0][1,1][1,2]
+    [2,0][2,1][2,2]
+*/
+
+/*
+    There are 8 ways of winning Tic-tac-Toe
+    3 horizontial ways of winning
+    3 vertical ways of winning
+    2 diagonal ways of winning
+    (3 + 3) = 6 -> (6 + 2) = 8
+    9 - 8 = 1 -> you get one chance at winning
+*/
+
+/*
+    First diagonal - Has the same numbers or the two indexs for both (x,y) in that cell.
+    Second diagonal - The two indexs are the inverse of each or they add to the number '2'
+    Horizontial - All in the same row - the y changes, the x stays the same, i.e. y + 1,.
+    Vertical - All in the same column the x changes, the y stays the same i.e x + 1.
+*/
+
+// color code reference https://opensource.com/article/19/9/linux-terminal-colors
+
 #include <iostream>
 #include <string>
 #include <regex>
 
 #define SIZE 3
-
 const std::string SIZEOFGRID = "2";
-
 const char players[2] = {'O', 'X'};
 
-// color code reference https://opensource.com/article/19/9/linux-terminal-colors
 std::string ColorBlue(char z)
 {
     return "\e[01;34m" + std::string(1, z) + "\e[0m";
@@ -28,7 +50,6 @@ std::string colorElement(char s)
 {
     if (s == 'O')
         return ColorGreen(s);
-
     if (s == 'X')
         return ColorBlue(s);
     else
@@ -46,6 +67,7 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
     const std::regex pattern(pattern_string);
 
     std::string usersBoardInput = "";
+
     // flag to indicate if we want to show the error message
     bool show_error = false;
     std::smatch matches;
@@ -53,12 +75,12 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
     do
     {
         if (show_error == true)
-            std::cout << "\n[ Error ] " << usersBoardInput << "  that is not a valid input\n";
-
-        std::cout << "Please enter numerical values for the grid location: ROW [SPACE] COL" << std::endl;
+            std::cout << "\n[ Error ] your input: " << usersBoardInput << " is not a valid input\n" "It must be in the boundaries of 0 - 2 of both row and column\n\n";
+        std::cout << "\n";
+        std::cout << "Please enter numerical values for the grid location in this format: [" "Row" "] [" "SPACE" "] [" "Column" "]:\n";
         std::getline(std::cin, usersBoardInput);
         show_error = true;
-
+    
     } while (!std::regex_match(usersBoardInput, matches, pattern));
 
     // https://www.cplusplus.com/reference/string/stoi/
@@ -66,8 +88,10 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
     int row = stoi(matches[1].str());
     int column = stoi(matches[2].str());
 
+    std::cout << "\n";
     std::cout << "row is " << row << "\n";
     std::cout << "column is " << column << "\n";
+    std::cout << "\n";
 
     if (board[row][column] == '.') // it's a period
     {
@@ -87,17 +111,16 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
             player = true;
         }
     }
-    // Paired with line 37 if statement block, for checking if the cell is (not) a period
+    // Paired with the if statement block, for checking if the cell is (not) a period
     else
     {
         // implemention - If your previous input is the same as the next input.
-        std::cout << "You entered a position that is already occuped by: " << board[row][column];
-        std::cout << "\nPlease enter again: \n";
-        
+        std::cout << "You entered a position that has been occuped by: " << board[row][column];
+        std::cout << "\n\n";
+
+        testUserInput(board, player);
         // std::cout << "Invalid input: rows must be 0 - " << (SIZE - 1) << " and columns must be  0 - " << (SIZE - 1) << "\n";
         // std::cout << "\n";
-        
-        testUserInput(board, player);  
     }
 }
 
@@ -105,9 +128,11 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
 // be guaranteed that it is infact a period.
 bool checkEmptyBoard(char board[SIZE][SIZE])
 {
-    for (int x = 0; x < SIZE; x++) // My Row, X or I
+    // My Row, X or I
+    for (int x = 0; x < SIZE; x++) 
     {
-        for (int y = 0; y < SIZE; y++) // My colunm, Y or J
+        // My colunm, Y or J
+        for (int y = 0; y < SIZE; y++) 
         {
             if (board[x][y] == '.')
             {
@@ -168,7 +193,6 @@ void userInputBoard(char board[SIZE][SIZE], bool &player)
         // Paired with line 37 if statement block, for checking if the cell is (not) a period
         else
         {
-            
             // implemention - If your previous input is the same as the next input.
             std::cout << "You entered the same row and column again [" << row << "] [SPACE] [" << column << "]:\nPlease enter again: \n";
             userInputBoard(board, player);
@@ -210,29 +234,6 @@ void printTicTacToe(char board[SIZE][SIZE], bool player, const bool winner)
         std::cout << "The player is: " << players[player] << "\n";
     }
 }
-
-/*
-    x,y  x,y  x,y
-    [0,0][0,1][0,2]
-    [1,0][1,1][1,2]
-    [2,0][2,1][2,2]
-*/
-
-/*
-    There are 8 ways of winning Tic-tac-Toe
-    3 horizontial ways of winning
-    3 vertical ways of winning
-    2 diagonal ways of winning
-    (3 + 3) = 6 -> (6 + 2) = 8
-    9 - 8 = 1 -> you get one chance at winning
-*/
-
-/*
-    First diagonal - Has the same numbers or the two indexs for both (x,y) in that cell.
-    Second diagonal - The two indexs are the inverse of each or they add to the number '2'
-    Horizontial - All in the same row - the y changes, the x stays the same, i.e. y + 1,.
-    Vertical - All in the same column the x changes, the y stays the same i.e x + 1.
-*/
 
 bool findWinnerHorizontial(char board[SIZE][SIZE])
 {
@@ -325,8 +326,9 @@ bool hasEmptyProperties(char emptyBoard[SIZE][SIZE])
             }
         }
     }
-
-    std::cout << "Failed to find empty space on game board\n";
+    
+    std::cout << "\n";
+    std::cout << "Failed to find empty space on the game board\n";
     return false;
 }
 
@@ -409,13 +411,13 @@ int main()
     bool winnerOfGame = false;
 
     char gameBoard[3][3] = {{'.', '.', '.'},
-                                   {'.', '.', '.'},
-                                   {'.', '.', '.'}};
+                            {'.', '.', '.'},
+                            {'.', '.', '.'}};
 
     while (!winnerOfGame && hasEmptyProperties(gameBoard))
     {
-        userInputBoard(gameBoard, player);
-        // testUserInput(gameBoard, player);
+        // userInputBoard(gameBoard, player);
+        testUserInput(gameBoard, player);
         winnerOfGame = winner(gameBoard);
         printTicTacToe(gameBoard, player, winnerOfGame);
     }
