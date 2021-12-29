@@ -60,7 +60,7 @@ std::string colorElement(char s)
 // goal 1 - user board input has a [SPACE]
 // goal 2 - left of space should be valid integer (board location)
 // goal 3 - right of space should be valid integer (board location)
-void testUserInput(char board[SIZE][SIZE], bool &player)
+void regexUserInput(char board[SIZE][SIZE], bool &player)
 {
     std::string pattern_string = "^([0-" + SIZEOFGRID + "]{1}) ([0-" + SIZEOFGRID + "]{1})$";
     // std::string pattern_string = "^([0-2]{1}) ([0-2]{1})$";
@@ -75,12 +75,13 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
     do
     {
         if (show_error == true)
-            std::cout << "\n[ Error ] your input: " << usersBoardInput << " is not a valid input\n" "It must be in the boundaries of 0 - 2 of both row and column\n\n";
+            std::cout << "\n[ Error ] your input: " << usersBoardInput << " is not a valid input\n" 
+            "It must be in the boundaries of 0 - 2 of both row and column\n";
         std::cout << "\n";
-        std::cout << "Please enter numerical values for the grid location in this format: [" "Row" "] [" "SPACE" "] [" "Column" "]:\n";
+        std::cout << "Please enter numerical values for the grid location in this format: [""Row""] [""SPACE""] [""Column""]:\n";
         std::getline(std::cin, usersBoardInput);
         show_error = true;
-    
+
     } while (!std::regex_match(usersBoardInput, matches, pattern));
 
     // https://www.cplusplus.com/reference/string/stoi/
@@ -95,30 +96,18 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
 
     if (board[row][column] == '.') // it's a period
     {
-        // if it equals true is player1 turn
-        if (player)
-        {
-            // Mark the cell with an 'X'
-            board[row][column] = 'X';
-            // true is first player
-            player = false;
-            // false is second player
-        }
-        else
-        {
-            // Mark the cell with a 'O'
-            board[row][column] = 'O';
-            player = true;
-        }
+        board[row][column] = players[player];
+        // player switching between X and
+        player = player ^ true;
     }
     // Paired with the if statement block, for checking if the cell is (not) a period
     else
     {
         // implemention - If your previous input is the same as the next input.
         std::cout << "You entered a position that has been occuped by: " << board[row][column];
-        std::cout << "\n\n";
+        std::cout << "\n";
 
-        testUserInput(board, player);
+        regexUserInput(board, player);
         // std::cout << "Invalid input: rows must be 0 - " << (SIZE - 1) << " and columns must be  0 - " << (SIZE - 1) << "\n";
         // std::cout << "\n";
     }
@@ -129,10 +118,10 @@ void testUserInput(char board[SIZE][SIZE], bool &player)
 bool checkEmptyBoard(char board[SIZE][SIZE])
 {
     // My Row, X or I
-    for (int x = 0; x < SIZE; x++) 
+    for (int x = 0; x < SIZE; x++)
     {
         // My colunm, Y or J
-        for (int y = 0; y < SIZE; y++) 
+        for (int y = 0; y < SIZE; y++)
         {
             if (board[x][y] == '.')
             {
@@ -174,21 +163,9 @@ void userInputBoard(char board[SIZE][SIZE], bool &player)
     {
         if (board[row][column] == '.') // it's a period
         {
-            // if it equals true is player1 turn
-            if (player)
-            {
-                // Mark the cell with an 'X'
-                board[row][column] = 'X';
-                // true is first player
-                player = false;
-                // false is second player
-            }
-            else
-            {
-                // Mark the cell with a 'O'
-                board[row][column] = 'O';
-                player = true;
-            }
+            board[row][column] = players[player];
+            // player switching between X and
+            player = player ^ true;
         }
         // Paired with line 37 if statement block, for checking if the cell is (not) a period
         else
@@ -202,6 +179,86 @@ void userInputBoard(char board[SIZE][SIZE], bool &player)
     {
         std::cout << "Invalid input: rows must be 0 - " << (SIZE - 1) << " and columns must be  0 - " << (SIZE - 1) << "\n";
         std::cout << "\n";
+    }
+}
+
+bool isInRange(int x)
+{
+    return 0 <= x && x <= SIZE - 1;
+}
+
+std::pair<int, int> getValidTokens(std::vector<std::string> tokens, int correct_size)
+{
+    // we have correct number of tokens 2
+    if (tokens.size() == correct_size && 
+        // each token is of length 1
+        tokens[0].size() == 1 &&         
+        tokens[1].size() == 1 &&
+        isdigit(tokens[0][0]) &&
+        // each token looks like an digit 
+        isdigit(tokens[1][0]))
+    {
+        int row = stoi(tokens[0]);
+        int col = stoi(tokens[1]);
+
+        if (isInRange(row) && isInRange(col))
+        {
+            return std::pair<int, int>(row, col);
+        }
+        else
+        {
+            // index out of range
+            return std::pair<int, int>(-1, -1); 
+        }
+    }
+    // not an integer or too many spaces
+    return std::pair<int, int>(-2, -2); 
+}
+
+void delimiterUserInput(char board[SIZE][SIZE], bool &player)
+{
+    std::vector<std::string> tokens;
+    std::string inputs;
+
+    std::cout << "Please enter your desired row and column [""Row""] [SPACE] [""Column""]:\n";
+
+    bool terminate = false;
+
+    while (!terminate && std::getline(std::cin, inputs))
+    {
+        std::istringstream iss(inputs);
+        std::string token;
+
+        while (std::getline(iss, token, ' '))
+            tokens.push_back(token);
+
+        std::pair<int, int> indexValues = getValidTokens(tokens, 2);
+
+        if (indexValues.first >= 0)
+        {
+            // board[indexValues.first][indexValues.second] = players[player];
+            // terminate = true;
+
+            if (board[indexValues.first][indexValues.second] == '.') // it's a period
+            {
+                board[indexValues.first][indexValues.second] = players[player];
+                terminate = true;
+                player = player ^ true;
+            }
+            // Paired with the if statement block, for checking if the cell is (not) a period
+            else
+            {
+                // implemention - If your previous input is the same as the next input.
+                std::cout << "You entered a position that has been occuped by: " << board[indexValues.first][indexValues.second];
+                std::cout << "\n";
+            }
+        }
+        else if (indexValues.first == -1)
+            std::cout << "Index out of range (0 - 2) both row and column \n";
+
+        else
+            std::cout << "Index is not valid: No integer found or too many spaces\n";
+        tokens.clear();
     }
 }
 
@@ -326,7 +383,7 @@ bool hasEmptyProperties(char emptyBoard[SIZE][SIZE])
             }
         }
     }
-    
+
     std::cout << "\n";
     std::cout << "Failed to find empty space on the game board\n";
     return false;
@@ -416,8 +473,9 @@ int main()
 
     while (!winnerOfGame && hasEmptyProperties(gameBoard))
     {
-        // userInputBoard(gameBoard, player);
-        testUserInput(gameBoard, player);
+        userInputBoard(gameBoard, player);
+        // delimiterUserInput(gameBoard, player);
+        // regexUserInput(gameBoard, player);
         winnerOfGame = winner(gameBoard);
         printTicTacToe(gameBoard, player, winnerOfGame);
     }
