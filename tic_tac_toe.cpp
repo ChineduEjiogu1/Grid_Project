@@ -473,9 +473,9 @@ int main()
 
     while (!winnerOfGame && hasEmptyProperties(gameBoard))
     {
-        userInputBoard(gameBoard, player);
+        // userInputBoard(gameBoard, player);
+        regexUserInput(gameBoard, player);
         // delimiterUserInput(gameBoard, player);
-        // regexUserInput(gameBoard, player);
         winnerOfGame = winner(gameBoard);
         printTicTacToe(gameBoard, player, winnerOfGame);
     }
