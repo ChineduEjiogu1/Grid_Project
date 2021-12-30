@@ -187,6 +187,20 @@ bool hasEmptyProperties(char emptyBoard[SIZE_1][SIZE_2])
     return false;
 }
 
+void fillInGameBoard(char board[SIZE_1][SIZE_2])
+{
+    // fills the bin according to what's already in there:
+    int position = 0;     /* lowest level or bottom of the board */
+
+    for (position = SIZE_1-1; position >= 0; position--)
+    {
+        if (board[SIZE_1][SIZE_2] == ' ')
+        {
+            // To-do
+        }   
+    }               
+}
+
 bool tests()
 {
 
