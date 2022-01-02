@@ -9,7 +9,7 @@
 
 const std::string SIZEOFGRID = "2";
 char disc = 'X';
-int chooseColumnSize = 7;
+int chooseColumn = 7;
 
 std::string ColorBlue(char z)
 {
@@ -31,10 +31,9 @@ std::string colorElement(char s)
     if (s == 'O')
         return ColorRed(s);
     if (s == 'X')
-         return ColorYellow(s);
+        return ColorYellow(s);
     else
-    return ColorBlue(s);
-       
+        return ColorBlue(s);
 }
 
 bool checkEmptyBoard(char board[NUM_OF_ROWS][NUM_OF_COLUMNS])
@@ -78,17 +77,16 @@ bool findWinnerHorizontial(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], char player)
                 consecutiveCount = 0;
             }
             else
-            { 
-                consecutiveCount ++;
+            {
+                consecutiveCount++;
                 // std::cout << "Match: consecutiveCount " << consecutiveCount << " " <<  player << " [" << board[x][y] << "]\n";
             }
 
-            if(consecutiveCount == 4)
+            if (consecutiveCount == 4)
             {
                 std::cout << "The winner is horizontial: " << board[0][y] << "\n";
                 return true;
-            }               
-            
+            }
         }
     }
 
@@ -98,7 +96,7 @@ bool findWinnerHorizontial(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], char player)
 bool findWinnerVertical(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], char player)
 {
     unsigned int consecutiveCount = 0;
-    
+
     for (int y = 0; y < NUM_OF_COLUMNS; y++)
     {
         consecutiveCount = 0;
@@ -110,19 +108,19 @@ bool findWinnerVertical(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], char player)
                 consecutiveCount = 0;
             }
             else
-            { 
-                consecutiveCount ++;
+            {
+                consecutiveCount++;
                 // std::cout << "Match: consecutiveCount " << consecutiveCount << " " <<  player << " [" << board[x][y] << "]\n";
             }
 
-            if(consecutiveCount == 4)
+            if (consecutiveCount == 4)
             {
                 std::cout << "The winner is Vertical: " << board[x][y] << "\n";
                 return true;
-            }               
+            }
         }
     }
-    
+
     return false;
 }
 
@@ -135,68 +133,58 @@ bool findWinnerVertical(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], char player)
     [4,0][4,1][4,2][4,3][4,4][4,5][4,6]
     [5,0][5,1][5,2][5,3][5,4][5,5][5,6]
 */
-bool findWinnerDiagonal(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], char player)
+bool findWinnerDiagonal(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], int row, int col)
 {
-    //there are 2 diagonals
-    //x++ y++ to bottom left to right
-    //x-- y-- to go from top left bottom right.
-    //but verify somehow
-    //also check your for loop constraints either the end condition or the start condition
+    // there are 2 diagonals
+    // x++ y++ to bottom left to right
+    // x-- y-- to go from top left bottom right.
+    // but verify somehow
+    // also check your for loop constraints either the end condition or the start condition
 
-    for (int x = 0; x < NUM_OF_ROWS; x++)
+    // first diagonal
+    int count = 0;
+
+    for (; row < NUM_OF_ROWS - 1 && col < NUM_OF_COLUMNS - 1; row++, col++)
     {
-        int countConnections = 0;
-        int countConnections2 = 0;
-        for (int y = 0; y < NUM_OF_COLUMNS; y++)
+        if (board[row][col] != ' ' && board[row][col] == board[row + 1][col + 1])
         {
-            countConnections = 0;
-            if (board[x][y] == 'X' || board[x][y] == 'O')
+            count += 1;
+            std::cout << "Found match, count " << count << std::endl;
+            if (count == 3)
             {
-                if(x == y)
-                {
-                    // x++;
-                    // y++;
+                return true;
+            }
+        }
+        else
+        {
+            count = 0;
+        }
+    }
+    return false;
 
-                    countConnections++;
-                    
-                    std::cout << "\n";
-                    std::cout << "The counts are: " << " " << countConnections << "\n";
+    // seoond diagonal
 
-                }
+    int count2 = 0;
 
-                if(countConnections == WINNING_PATTERN)
-                {
-                    std::cout << "The winner is diagonal: " << board[x][y] << "\n";
-                    return true; 
-                }
-            
-                    
-                if ( ( x + y == 6 || x + y == 5 || x + y == 4 || x + y == 3)) // (sizeof(board[x][y] - 1)) ) 
-                {
-                    // x++;
-                    // y++;
-
-                    countConnections2++;
-                    
-                    std::cout << "The counts are: " << " " << countConnections2 << "\n";
-                    // std::cout << "The winner is diagonal: " << board[x][y] << "\n";
-                }
-
-                if(countConnections2 == WINNING_PATTERN)
-                {
-                    std::cout << "The winner is diagonal: " << board[x][y] << "\n\n";
-                    return true; 
-                }
-              
-            }  
+    for (; row > 0 && col < NUM_OF_COLUMNS - 1; row--, col++)
+    {
+        if (board[row][col] != ' ' && board[row][col] == board[row - 1][col + 1])
+        {
+            count2 += 1;
+            std::cout << "Found match, count " << count2 << std::endl;
+            if (count2 == 3)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            count2 = 0;
         }
     }
 
     return false;
 }
-    
-    
-
 
 void printConnect4(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], bool &player, const bool winner)
 {
@@ -222,80 +210,84 @@ void printConnect4(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], bool &player, const 
     }
 
     std::cout << "\n";
-    
+
     if (winner == false)
     {
-        std::cout << "It's player " << disc << " turn" << "\n";
+        std::cout << "It's player " << disc << " turn"
+                  << "\n";
     }
 }
 
 bool winner(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], char player)
 {
-    return (findWinnerHorizontial(board, player) || findWinnerVertical(board, player)) || findWinnerDiagonal(board, player);
+    int row = 0;
+    int col = 0;
+
+    return (findWinnerHorizontial(board, player) || findWinnerVertical(board, player) || findWinnerDiagonal(board, row, col));
 }
 
 void fillInGameBoard(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], int chosenColumn)
 {
     // fills the bin according to what's already in there:
     /* lowest level or bottom of the board */
-    int row = 0;     
-    for (row = NUM_OF_ROWS-1; row >= 0; row--)
+    int row = 0;
+    for (row = NUM_OF_ROWS - 1; row >= 0; row--)
     {
         if (board[row][chosenColumn] == ' ')
         {
             // To-do
             board[row][chosenColumn] = disc;
             break;
-        }   
-    }               
+        }
+    }
 }
 
 bool chooseColumnPosition(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], bool &player)
 {
     // choose 1 2 3 4 5 6 7:
     char choose;
-    
+
     while (1)
     {
         printf("\nPlease choose a column: ");
         scanf(" %c", &choose);
         std::cout << "\n";
-        switch(choose)
+        switch (choose)
         {
-            case '1':
-                chooseColumnSize = 0;
-                break;
-            case '2':
-                chooseColumnSize = 1;
-                break;
-            case '3':
-                chooseColumnSize = 2;
-                break;
-            case '4':
-                chooseColumnSize = 3;
-                break;
-            case '5':
-                chooseColumnSize = 4;
-                break;
-            case '6':
-                chooseColumnSize = 5;
-                break;
-            case '7':
-                chooseColumnSize = 6;
-                break;
-            default:
-                chooseColumnSize = 666;
-                printf("\nOut of bounds!, wrong column position, Try again.\n\n");
-                printConnect4(board, player, winner);
+        case '1':
+            chooseColumn = 0;
+            break;
+        case '2':
+            chooseColumn = 1;
+            break;
+        case '3':
+            chooseColumn = 2;
+            break;
+        case '4':
+            chooseColumn = 3;
+            break;
+        case '5':
+            chooseColumn = 4;
+            break;
+        case '6':
+            chooseColumn = 5;
+            break;
+        case '7':
+            chooseColumn = 6;
+            break;
+        default:
+            chooseColumn = 666;
+            printf("\nOut of bounds!, wrong column position, Try again.\n\n");
+            printConnect4(board, player, winner);
         }
         // break out of while loop if the right letter was chosen:
-        if ((chooseColumnSize >= 0 && chooseColumnSize <= 6) && (board[0][chooseColumnSize] == ' '))
+        if ((chooseColumn >= 0 && chooseColumn <= 6) && (board[0][chooseColumn] == ' '))
         {
-            fillInGameBoard(board, chooseColumnSize);
+            fillInGameBoard(board, chooseColumn);
 
             bool winnerOfGame = winner(board, disc);
 
-            if(!winnerOfGame)
+            if (!winnerOfGame)
             {
                 disc = (disc == 'X') ? 'O' : 'X';
             }
@@ -347,7 +339,7 @@ bool tests()
                                                                  {'X', 'X', 'X', 'O', 'O', 'X', 'O'},
                                                                  {'O', 'X', 'X', 'X', 'O', 'O', 'O'},
                                                                  {'X', 'X', 'X', 'O', 'X', 'O', 'O'},
-                                                                 {'X', 'O', 'X', 'O', 'O', 'X', 'O'}, 
+                                                                 {'X', 'O', 'X', 'O', 'O', 'X', 'O'},
                                                                  {'X', 'X', 'X', 'O', 'X', 'O', 'O'}};
 
     bool test3 = findWinnerHorizontial(winningBoardHorizontial, 'O');
@@ -356,31 +348,34 @@ bool tests()
                                                               {'X', 'O', 'X', 'O', 'O', 'X', 'O'},
                                                               {'O', 'X', 'O', 'X', 'O', 'O', 'O'},
                                                               {'X', 'X', 'X', 'O', 'X', 'O', 'X'},
-                                                              {'X', 'O', 'O', 'O', 'X', 'X', 'O'}, 
+                                                              {'X', 'O', 'O', 'O', 'X', 'X', 'O'},
                                                               {'X', 'X', 'X', 'O', 'X', 'O', 'O'}};
-
+    
     bool test4 = findWinnerVertical(winningBoardVertical, 'O');
+
+    int row = 0;
+    int col = 0;
 
     char winningBoardDiagonal[NUM_OF_ROWS][NUM_OF_COLUMNS] = {{'O', 'X', 'O', 'O', 'O', 'X', 'X'}, //  Diagonal in the middle of board (O is the answer)
                                                               {'X', 'O', 'X', 'O', 'O', 'X', 'O'},
-                                                              {'O', 'X', 'O', 'X', 'O', 'O', 'O'},
+                                                              {'O', 'X', 'O', 'X', 'X', 'O', 'O'},
                                                               {'X', 'X', 'O', 'O', 'O', 'O', 'X'},
-                                                              {'X', 'O', 'O', 'X', 'X', 'X', 'O'}, 
+                                                              {'X', 'O', 'O', 'X', 'X', 'X', 'O'},
                                                               {'X', 'X', 'X', 'O', 'X', 'O', 'O'}};
+    
 
-    bool test5 = findWinnerDiagonal(winningBoardDiagonal, 'O');
+    bool test5 = findWinnerDiagonal(winningBoardDiagonal, 0, 3);
 
-    char winningBoardDiagonal2[NUM_OF_ROWS][NUM_OF_COLUMNS] = {{'X', 'X', 'O', 'O', 'O', 'O', 'X'}, //  Diagonal in the middle of board (X is the answer)
-                                                               {'X', 'O', 'X', 'O', 'O', 'X', 'O'},
+    char winningBoardDiagonal2[NUM_OF_ROWS][NUM_OF_COLUMNS] = {{'O', 'X', 'O', 'O', 'O', 'X', 'X'}, //  Diagonal in the middle of board (X is the answer)
+                                                               {'X', 'X', 'O', 'O', 'O', 'X', 'O'},
                                                                {'O', 'O', 'X', 'X', 'X', 'O', 'O'},
                                                                {'X', 'O', 'O', 'X', 'X', 'X', 'X'},
-                                                               {'X', 'O', 'O', 'O', 'O', 'X', 'O'}, 
+                                                               {'X', 'O', 'O', 'O', 'O', 'X', 'O'},
                                                                {'X', 'X', 'X', 'O', 'X', 'O', 'O'}};
 
-    bool test6 = findWinnerDiagonal(winningBoardDiagonal2, 'X');
+    bool test6 = findWinnerDiagonal(winningBoardDiagonal2, 3, 6);
 
-
-    return (test1 && test2 && test3 && test4 && test5 && test6);// && test4 && test5 && test6);
+    return (test1 && test2 && test3 && test4 && test5 && test6); // && test4 && test5 && test6);
 }
 
 int main()
@@ -403,19 +398,17 @@ int main()
     bool winnerOfGame = false;
 
     char connect4Board[NUM_OF_ROWS][NUM_OF_COLUMNS] = {{' ', ' ', ' ', ' ', ' ', ' ', ' '}, //  Diagonal in the middle of board (X is the answer)
-                                          {' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                                          {' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                                          {' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                                          {' ', ' ', ' ', ' ', ' ', ' ', ' '}, 
-                                          {' ', ' ', ' ', ' ', ' ', ' ', ' '}};
+                                                       {' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                                                       {' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                                                       {' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                                                       {' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                                                       {' ', ' ', ' ', ' ', ' ', ' ', ' '}};
 
     while (!winnerOfGame && hasEmptyProperties(connect4Board))
     {
         printConnect4(connect4Board, player, winnerOfGame);
         winnerOfGame = chooseColumnPosition(connect4Board, player);
         // fillInGameBoard(connect4Board, player);
-        
-        
     }
 
     if (winner(connect4Board, disc))
@@ -430,6 +423,6 @@ int main()
 
         printConnect4(connect4Board, player, winnerOfGame);
     }
-    
+
     return 0;
 }
