@@ -7,7 +7,7 @@
 #define NUM_OF_COLUMNS 7
 #define WINNING_PATTERN 4
 
-const std::string SIZEOFGRID = "2";
+// const std::string SIZEOFGRID = "2";
 char disc = 'X';
 int chooseColumn = 7;
 
@@ -288,7 +288,7 @@ bool findDiagonal(char board[NUM_OF_ROWS][NUM_OF_COLUMNS])
     return false;
 }
 
-void printConnect4(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], bool &player, const bool winner)
+void printConnect4(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], const bool winner)
 {
     char header[] = "  1   2   3   4   5   6   7  ";
     std::cout << header << "\n";
@@ -378,7 +378,7 @@ bool chooseColumnPosition(char board[NUM_OF_ROWS][NUM_OF_COLUMNS], bool &player)
         default:
             chooseColumn = 666;
             printf("\nOut of bounds!, wrong column position, Try again.\n\n");
-            printConnect4(board, player, winner);
+            printConnect4(board, winner);
         }
         // break out of while loop if the right letter was chosen:
         if ((chooseColumn >= 0 && chooseColumn <= 6) && (board[0][chooseColumn] == ' '))
@@ -502,7 +502,7 @@ int main()
 
     while (!winnerOfGame && hasEmptyProperties(connect4Board))
     {
-        printConnect4(connect4Board, player, winnerOfGame);
+        printConnect4(connect4Board, winnerOfGame);
         winnerOfGame = chooseColumnPosition(connect4Board, player);
         // fillInGameBoard(connect4Board, player);
     }
@@ -510,14 +510,14 @@ int main()
     if (winner(connect4Board, disc))
     {
         std::cout << "The winner is: " << disc << "\n\n";
-        printConnect4(connect4Board, player, winnerOfGame);
+        printConnect4(connect4Board, winnerOfGame);
     }
     else
     {
         std::cout << "\n";
         std::cout << "The game is a draw, please play again\n";
 
-        printConnect4(connect4Board, player, winnerOfGame);
+        printConnect4(connect4Board, winnerOfGame);
     }
 
     return 0;
