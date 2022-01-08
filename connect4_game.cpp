@@ -8,11 +8,8 @@ int main()
     {
         game.printConnect4();
         game.winnerOfGame = game.chooseColumnPosition();
-        // fillInGameBoard(connect4Board, player);
     }
-    // game.printConnect4();
-    // game.chooseColumnPosition();
-    // game.fillInGameBoard();
-    // game.winner();
-    // game.winner();
+
+    game.printConnect4();
+    std::cout << "The winner is: " << game.players << "\n";
 }
