@@ -10,6 +10,16 @@ std::string ColorBlue(std::string z)
     return "\e[01;34m" + z + "\e[0m";
 }
 
+std::string ColorRed(std::string w)
+{
+    return "\e[033;31m" + w + "\e[0m";
+}
+
+std::string ColorBlack(char w)
+{
+    return "\e[033;30m" + std::string(1, w) + "\e[0m";
+}
+
 std::string ColorYellow(char q)
 {
     return "\e[01;33m" + std::string(1, q) + "\e[0m";
@@ -23,10 +33,10 @@ std::string ColorRed(char w)
 std::string colorElement(char s)
 {
     if (s == 'O')
-        return ColorRed(s);
-    if (s == 'X')
         return ColorYellow(s);
-    else
+    if (s == 'X')
         return ColorBlue(s);
+    else
+        return ColorBlack(s);
 }
 
